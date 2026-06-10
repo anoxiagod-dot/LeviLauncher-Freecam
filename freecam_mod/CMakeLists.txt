@@ -8,6 +8,7 @@ add_library(freecam SHARED freecam.cpp)
 
 target_include_directories(freecam PRIVATE
     ${PRELOADER_SRC}
+    ${PRELOADER_SRC}/pl
 )
 
 find_library(log-lib log)
