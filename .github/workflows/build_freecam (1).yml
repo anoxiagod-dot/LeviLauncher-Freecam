@@ -1,0 +1,45 @@
+name: Build FreeCam SO
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Setup NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r26b
+
+      - name: Download preloader headers
+        run: |
+          wget -q https://github.com/LiteLDev/preloader-android/archive/refs/heads/main.zip -O preloader.zip
+          unzip -q preloader.zip
+          mv preloader-android-main preloader-sdk
+
+      - name: Build FreeCam
+        run: |
+          cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=android-26 \
+            -DANDROID=true \
+            -DPRELOADER_SRC=$(pwd)/preloader-sdk/src/pl \
+            -Bbuild \
+            -S freecam_mod
+          cmake --build build
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: freecam-mod
+          path: |
+            build/libfreecam.so
+            freecam_mod/manifest.json
