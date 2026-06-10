@@ -1,7 +1,0 @@
-{
-  "type": "preload-native",
-  "name": "FreeCam",
-  "author": "LeviFreeCam",
-  "version": "1.0.0",
-  "entry": "libfreecam.so"
-}
